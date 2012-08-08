@@ -1,7 +1,7 @@
 var audioService = {
 	sounds:{},
 	audioSources:{},
-	soundUrl:'./mp3/',
+	soundUrl:'mp3/',
 	context: null,
 	//正在播放的声音数
 	playingCount: 0,
@@ -18,7 +18,8 @@ var audioService = {
 			return;
 		}
 		var source = null;
-		
+		audioService.context.play(sound);
+		/*
 		source = this.context.createBufferSource();
 		source.buffer = this.sounds[sound];
 		source.loop = true;
@@ -44,27 +45,31 @@ var audioService = {
 		audioService.audioSources[sound] = source;
 		this.playingCount++;
 		this.playingSounds[sound] = sound;
+        */
 		
 	},
 	
 	playSounds: function(sounds) {
 		for(var i in sounds)
 		{
-			audioService.play(sounds[i]);
+			audioService.context.play(sounds[i]);
 		}
 	},
 	
 	stop: function(sound)
 	{
+    /*
 		if (!audioService.audioSources[sound])
 		{
 			console.log('audioSource for "' + sound + '" not found' );
 			return;
 		}
 		
-		var source = audioService.audioSources[sound];
-		source.noteOff(0);
-		
+        */
+		//var source = audioService.audioSources[sound];
+		//source.noteOff(0);
+        this.context.stop(sound);
+
 		this.playingCount--;
 		delete this.playingSounds.sound;
 	},
@@ -73,7 +78,7 @@ var audioService = {
 		for(var i in this.playingSounds)
 		{
 			var s = this.playingSounds[i];
-			this.stop(s);
+			this.context.stop(s);
 		}
 	},
 	
@@ -88,7 +93,12 @@ var audioService = {
 	*/
 	loadSound: function(sound, callback){
 		var url = this.soundUrl + sound + '.mp3';
-		
+        audioService.context.load(url,sound,function(){
+            console.log(sound + " load success!");
+            audioService.sounds[sound] = true;
+            callback(sound,true);
+        });
+		/*
 		console.log('load sound from:' + url);
 		var req = new XMLHttpRequest();
 		req.open("GET", url);
@@ -107,22 +117,23 @@ var audioService = {
 						callback(sound, true);
 					}
 				});
-			} catch(e) {
+			} catch(e) {*/
 				/*throw new Error(e.message
 					+ " / id: " + id
 					+ " / url: " + url
 					+ " / status: " + req.status
 					+ " / ArrayBuffer: " + (req.response instanceof ArrayBuffer)
 					+ " / byteLength: " + (req.response && req.response.byteLength ? req.response.byteLength : "undefined"));*/
-				console.log("For some reason, the audio download failed with a status of " + req.status + ". "
+				/*console.log("For some reason, the audio download failed with a status of " + req.status + ". "
 					+ " There is no reason why this shouldn't work.  I blame antivirus software.");
 			}
 		});
 		req.send();
+        */
 	},
 	
 	init: function(){
-		this.context = new webkitAudioContext();
+		this.context = new webkitAudioContext2();
 		this.gainNode = this.context.createGainNode();
 		this.gainNode.connect(this.context.destination);
 	}
