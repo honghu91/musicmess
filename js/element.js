@@ -176,6 +176,7 @@ Element.prototype._addPannel = function (){
 
 Element.prototype.destroy = function (){
 	this.stop();
+    this._music.state.addHoverEvent(this._sound);
 	this._music.state.notify('remove', this._id);
 	this._uiElement.hide();
 };

@@ -61,6 +61,7 @@
 	
 	function onDrag(e){
 		e.dataTransfer.setData('Text',e.target.id);
+        $("#" + e.target.id).unbind("hover");
 		//console.info('drag');
 	}
 	function onDragOver(e){
@@ -88,6 +89,9 @@
 		}
 		//console.info('drop');
 	}
+    function onDragEnd(e){
+        audioService.context.chorus();
+    }
 	function soundLoaded(id){
 		var icon=document.getElementById(id);
 		if(icon){
@@ -134,6 +138,21 @@
 		var el=e.currentTarget;
 		stateWrap.removeChild(el);
 	}
+    
+    var hoverTimer;
+    function hoverPlaying(e){//hover playsound
+       clearTimeout(hoverTimer);
+       hoverTimer = setTimeout(function(){
+            var sound = e.target.id;
+            audioService.context.weekSolo(sound);
+       },1000);
+    }
+    function unHoverPlaying(e){
+        clearTimeout(hoverTimer);
+        var sound = e.target.id;
+        audioService.stop(sound);
+        audioService.context.chorus();
+    }
 	
 	packageContext.init=function(data){
 		if(data){
@@ -151,13 +170,21 @@
 			var el=document.createElement('div');
 			el.id=info[i].name;
 			el.className='icon';
+            el.title = "试听";
 			el.style.backgroundPosition=info[i].pos;
 			el.setAttribute('sound',info[i].name);
 			//el.setAttribute('draggable',true);
 			el.addEventListener('dragstart',onDrag,false);
+            el.addEventListener('dragend',onDragEnd,false);
 			soundBarEl.appendChild(el);
 			audioService.loadSound(info[i].name,soundLoaded);
 		}
+        //hover试听
+
+        $(".icon").each(function(i){
+            $(this).hover(hoverPlaying,unHoverPlaying);
+        });
+
 		tryAddPerson();
 		setInterval(tryAddNote,2000);
 	};
@@ -200,6 +227,11 @@
 				break;
 		}
 	};
+    packageContext.addHoverEvent = function(sound){
+        $(".icon").each(function(){
+            $(this).hover(hoverPlaying,unHoverPlaying);
+        });
+    };
 	packageContext.reset=function(){
 		for(var i=0,len=queue.length;i<len;i++){
 			var person=queue[i],

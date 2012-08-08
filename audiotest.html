@@ -14,9 +14,9 @@
   audio.id = "a";
   document.body.appendChild(audio);
   var audio = document.getElementById("a");
-  alert(audio.tagName);
   document.getElementById("play").onclick = function(){
-    audio.play();
+    audio.currentTime = 30;
+    audio.volume = 0;
   }
 
   </script>
