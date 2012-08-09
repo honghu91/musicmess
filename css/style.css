@@ -202,9 +202,11 @@ h1{
 	background:url(./image/icons.png);
 	opacity:0;
 	-webkit-transition:opacity .3s linear;
-	cursor:pointer;
 	position:relative;
 	z-index:1;
+}
+#soundbar .icon{
+	cursor:pointer;
 }
 /**音符**/
 .note{

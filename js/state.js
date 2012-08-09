@@ -24,6 +24,11 @@
 			var person=new Element(getQueueId());
 			var el=person.getElement().get(0);
 			el.style.bottom=Math.ceil(Math.random()*20)+'px';
+            person._className = el.children[1].className;//记录下小鸟的类名
+            //拖至小鸟身上才可以
+            el.addEventListener('dragover',onDragOver,false);
+            el.addEventListener('drop',onDrop,false);
+
 			queue.push(person);
 			if(noAnimate){
 				el.style.left=(queue.length*190-180)+'px';
@@ -61,36 +66,62 @@
 	
 	function onDrag(e){
 		e.dataTransfer.setData('Text',e.target.id);
-        $("#" + e.target.id).unbind("hover");
+        //unHoverPlaying(e);
 		//console.info('drag');
 	}
 	function onDragOver(e){
+		e.preventDefault();
+        /*
 		if((notLoadCount===0 || !initData) && !queue[queue.length-1].isPlaying()){
-			e.preventDefault();
 			//console.info('dragover prevent')
 		}
+        */
 		//console.info('dragover')
 	}
+    
 	function onDrop(e){
 		e.preventDefault();
 		var data=e.dataTransfer.getData("Text");
+        $("#" + data).unbind("hover");
 		var el=document.getElementById(data);
 		if(!el || !el.getAttribute('sound')){
 			return;
 		}
-		var person=queue[queue.length-1];
+        var personClass = e.target.className;
+        for(var i = 0;i < queue.length;i ++){
+            if(personClass === queue[i]._className){
+                var person = queue[i];
+            }
+        }
 		if(!person.isPlaying()){
 			person.setSound(data);
 			person.play();
-			person.getElement().find('.bubble').append(el.cloneNode());
+            var elClone = el.cloneNode();
+            elClone.title = "";
+            elClone.id = "";
+			person.getElement().find('.bubble').append(elClone);
 			tryAddPerson();
 			el.setAttribute('draggable',false);
 			el.style.opacity='.3';
-		}
+		}else{//增加替换代码
+            var elClone = el.cloneNode();
+            elClone.title = "";
+            elClone.id = "";
+            person.getElement().find('.icon').replaceWith(elClone);
+            person._audioService.stop(person._sound);
+            var oldSoundIcon = document.getElementById(person._sound);
+            oldSoundIcon.setAttribute("draggable",true);
+			oldSoundIcon.style.opacity='1';
+            person.setSound(data);
+            person.play();
+			el.setAttribute('draggable',false);
+			el.style.opacity='.3';
+        }
+        audioService.context.chorus();
 		//console.info('drop');
 	}
     function onDragEnd(e){
-        audioService.context.chorus();
+        packageContext.addHoverEvent();//最后绑定事件
     }
 	function soundLoaded(id){
 		var icon=document.getElementById(id);
@@ -144,14 +175,20 @@
        clearTimeout(hoverTimer);
        hoverTimer = setTimeout(function(){
             var sound = e.target.id;
-            audioService.context.weekSolo(sound);
+            var opacity = $("#" + sound).css("opacity");
+            if(opacity == 1){
+                audioService.context.weekSolo(sound);
+            }
        },1000);
     }
     function unHoverPlaying(e){
         clearTimeout(hoverTimer);
         var sound = e.target.id;
-        audioService.stop(sound);
-        audioService.context.chorus();
+        var opacity = $("#" + sound).css("opacity");
+        if(opacity == 1){
+            audioService.stop(sound);
+            audioService.context.chorus();
+        }
     }
 	
 	packageContext.init=function(data){
@@ -161,8 +198,10 @@
 		}
 		stateWrapEl=document.getElementById('stateWrap');
 		stateEl=document.getElementById('state');
+        /*修改pel代码规则，原为拖到区域改为必须拖到小鸟身上 (全局变量？)
 		stateWrapEl.addEventListener('dragover',onDragOver,false);
 		stateWrapEl.addEventListener('drop',onDrop,false);
+        */
 		soundBarEl=document.getElementById('soundbar');
 		var info=music.model.getMusicInfo();
 		notLoadCount=info.length;
@@ -181,7 +220,7 @@
 		}
         //hover试听
 
-        $(".icon").each(function(i){
+        $("#soundbar .icon").each(function(i){
             $(this).hover(hoverPlaying,unHoverPlaying);
         });
 
@@ -228,7 +267,7 @@
 		}
 	};
     packageContext.addHoverEvent = function(sound){
-        $(".icon").each(function(){
+        $("#soundbar .icon").each(function(){
             $(this).hover(hoverPlaying,unHoverPlaying);
         });
     };
