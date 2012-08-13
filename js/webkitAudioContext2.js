@@ -103,7 +103,7 @@ var webkitAudioContext2 = function(){
                 if(id === "s_" + sound){
                    audio[i].volume = 1; 
                 }else{
-                    audio[i].volume = 0.3;
+                    audio[i].volume = 0.1;
                     //this.fadeTo(audio[i].id.replace(/^s_/,""),0.4,500);
                 }
             }

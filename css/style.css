@@ -314,11 +314,13 @@ h1{
 /*.show-pannel .opt-pannel{display:block;}
 .disabled .opt-pannel{display:none;}*/
 
-.opt-pannel{display:none;position:absolute;left:40px;bottom:40px;width:60px;height:30px;background-color:rgba(0, 0, 0, 0.3);border-radius:4px;}
+.opt-pannel{display:none;position:absolute;left:40px;bottom:40px;width:100px;height:30px;background-color:rgba(0, 0, 0, 0.3);border-radius:4px;}
 .music-element:hover .opt-pannel{display:block;}
 .disabled .opt-pannel{display:none !important;}
-.opt-pannel .mute{}
-.opt-pannel .stop{display:block;width:24px;height:24px;margin:3px 0 0 30px;background:url(image/remove.png) 2px 3px no-repeat;border-radius:4px;}
+.opt-pannel .mute,.opt-pannel .solo{display:block;width:24px;height:24px;float:left;margin:3px 0 0 5px;background:url(image/mute.png) -3px -0px no-repeat;border-radius:4px;}
+.opt-pannel .solo{background:url(image/solo.png) no-repeat;}
+.opt-pannel .mute:hover,.opt-pannel .solo:hover,.opt-pannel .hoverStyle{background-color:rgba(0,0,0,.3);}
+.opt-pannel .stop{display:block;width:24px;height:24px;float:left;margin:3px 0 0 10px;background:url(image/remove.png) 2px 3px no-repeat;border-radius:4px;}
 .opt-pannel .stop:hover{background-color:rgba(0,0,0,.3);}
 
 #login{
