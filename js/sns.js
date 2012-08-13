@@ -22,6 +22,7 @@ var snsWorld = {
 			console.log('socket state:' + snsWorld.webSocket.readyState);
 		}
 	},
+
 	webSocket: null,
 	serverHost: 'ws://localhost:1234',
 	isConnected: false,
