@@ -137,6 +137,18 @@ Element.prototype._init = function (){
 	this._bindEvent();
 };
 
+Element.prototype._mute = function(){
+    var self = this;
+    var element = this._uiElement.getElement();
+    if(self._playing){
+        element.find('.mute').addClass("hoverStyle");
+        self.stop();
+    }else{
+        element.find('.mute').removeClass("hoverStyle");
+        self.play();
+    }
+};
+
 Element.prototype._bindEvent = function (){
 	var self = this;
 	var element = this._uiElement.getElement();
@@ -147,11 +159,12 @@ Element.prototype._bindEvent = function (){
 		// self._hidePannel();
 	// });
 
-	element.find('.mute').toggle(function (e){
-		self.stop();
-	}, function (){
-		self.play();
-	});
+	element.find('.mute').click(function (e){
+        self._mute();
+    });
+    element.find('.solo').click(function(){
+        
+    });
 
 	element.find('.stop').bind('click', function (e){
 		self.destroy();
@@ -161,7 +174,7 @@ Element.prototype._bindEvent = function (){
 
 Element.prototype._addPannel = function (){
 	var element = this._uiElement.getElement();
-	element.append('<div class="opt-pannel"><a href="###" class="mute" title="静音"><!-- 图标 --></a><a href="###" class="stop" title="移除"><!-- 图标 --></a></div>');
+	element.append('<div class="opt-pannel"><a href="###" class="mute" title="静音"><!-- 图标 --></a><a href="###" class="solo" title="独唱"><!-- 图标 --></a><a href="###" class="stop" title="移除"><!-- 图标 --></a></div>');
 };
 
 // Element.prototype._showPannel = function (){
@@ -176,6 +189,7 @@ Element.prototype._addPannel = function (){
 
 Element.prototype.destroy = function (){
 	this.stop();
+    this._music.state.addHoverEvent(this._sound);
 	this._music.state.notify('remove', this._id);
 	this._uiElement.hide();
 };
@@ -184,6 +198,13 @@ Element.prototype.getElement = function (){
 	return this._uiElement.getElement();
 };
 
+Element.prototype.solo = function(){
+    this._audioService.context.solo(this._sound);
+};
+
+Element.prototype.chorus = function(){
+    this._audioService.context.chorus();
+};
 /**
  停止播放
 **/

@@ -1,7 +1,35 @@
 ;(function(ns){
 	$('#enter').click(function(){
 		var name = $('.name').val();
+            success = 1;
+            users = ['i','s','sa'];
+			if(success){
+				$('#login').hide();
+				$('.mask').hide();
+				
+				snsWorld.nickname = name;
+				if (users)
+				{
+					$('#snspanel').show();
+					
+					$('#friend_list').empty();
+					for(var i in users)
+					{
+						var nick = users[i];
+						if (name == nick) continue;
+						
+						$('#friend_list').append($('<li>' + nick + '</li>'));
+					}
+					
+					$('#friend_list li').click(function(){
+						var nick = $(this).text();
+						snsWorld.inviteGuess(nick, music.state.collect());
+					});
+				}
+			}
 		snsWorld.login(name, function(success, users){
+            success = 1;
+            users = ['i','s','sa'];
 			if(success){
 				$('#login').hide();
 				$('.mask').hide();
