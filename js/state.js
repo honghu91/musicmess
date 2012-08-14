@@ -62,8 +62,43 @@
 				break;
 			}
 		}
+        checkSolo();//因减人导致的solo变化:出现solo
 	};
 	
+    function muteAll(){
+        for(var i = 0; i < queue.length;i ++){
+            if(queue[i]._sound) queue[i]._mute();
+        }
+    }
+
+    function unmuteAll(){
+        for(var i = 0; i < queue.length;i ++){
+            if(queue[i]._sound) queue[i]._unmute();
+        }
+    }
+
+    function checkSolo(){//检查由于某个静音造成的某个solo的出现,只做样式上的处理
+        var count = 0,record;
+        for(var i = 0;i < queue.length;i ++){
+            if(queue[i]._sound && queue[i]._playing){
+               count ++; 
+               record = i;
+            }
+            
+        }
+        if(count != 1) {
+            $(".solo").removeClass("hoverStyle");
+                for(var j = 0;j < queue.length;j ++){
+                    queue[j]._isSolo = false;
+                }
+            return;
+        }
+        queue[record]._isSolo = true;
+        $(".solo").removeClass("hoverStyle");
+        var el = queue[record]._uiElement.getElement();
+        el.find('.solo').addClass('hoverStyle');
+    }
+
 	function onDrag(e){
 		e.dataTransfer.setData('Text',e.target.id);
         //unHoverPlaying(e);
@@ -93,7 +128,7 @@
                 var person = queue[i];
             }
         }
-		if(!person.isPlaying()){
+		if(!person._sound){
 			person.setSound(data);
 			person.play();
             var elClone = el.cloneNode();
@@ -113,11 +148,12 @@
             oldSoundIcon.setAttribute("draggable",true);
 			oldSoundIcon.style.opacity='1';
             person.setSound(data);
-            person.play();
+            if(person._playing) person.play();
 			el.setAttribute('draggable',false);
 			el.style.opacity='.3';
         }
         audioService.context.chorus();
+        checkSolo();
 		//console.info('drop');
 	}
     function onDragEnd(e){
@@ -177,7 +213,7 @@
             var sound = e.target.id;
             var opacity = $("#" + sound).css("opacity");
             if(opacity == 1){
-                audioService.context.weekSolo(sound);
+                audioService.context.weakSolo(sound);
             }
        },1000);
     }
@@ -261,6 +297,15 @@
 			case 'remove':
 				removePerson(data);
 				break;
+            case 'muteAll'://要求将其他元素全部mute
+                muteAll();
+                break;
+            case 'unmuteAll':
+                unmuteAll();
+                break;
+            case 'checkSolo':
+                checkSolo();
+                break;
 			default:
 				console.info('unknown command');
 				break;

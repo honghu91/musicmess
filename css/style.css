@@ -508,3 +508,6 @@ h1{
 	display: none;
 	background:url(./image/ok.jpg);
 }
+#loginBtn{
+        display:none;
+}

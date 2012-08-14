@@ -89,13 +89,13 @@ var webkitAudioContext2 = function(){
         var audio = document.getElementsByTagName("audio");
         for(var i = 0;i < audio.length;i ++){
             var id = audio[i].id;
-            if(/^s_/.test(id) && !audio[i].paused){
+            if(/^s_/.test(id)){
                 audio[i].volume = 1;
                 //this.fadeTo(audio[i].id.replace(/^s_/,""),1,500);
             }
         };
     };
-    this.weekSolo = function(sound){//其他降音
+    this.weakSolo = function(sound){//其他降音
         var audio = document.getElementsByTagName("audio");
         for(var i = 0;i < audio.length;i ++){
             var id = audio[i].id;
