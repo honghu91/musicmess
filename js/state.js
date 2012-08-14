@@ -186,10 +186,10 @@
     }
 
     function onPay(e){
-        var goodslist = JSON.stringify([{
+        var goodslist = [{
             goods_id:e.target.id,
             buy_count:1
-        }]);
+        }];
         var url = CGI_GET_PARAMS+"?appid="+appid+"&openid="+openid+"&openkey="+openkey+"&pf="+pf+"&pfkey="+pfkey
             +"&goodslist="+goodslist+"&retype=2";
         music.jsonp.getJSONP(url,function(response){
