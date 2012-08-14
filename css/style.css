@@ -511,3 +511,15 @@ h1{
 #loginBtn{
         display:none;
 }
+#right_panel{
+    position:absolute;
+    width:150px;
+    height:400px;
+    right:-125px;
+    top:0;
+    background-image: url(./image/right_panel.png);
+    background-position: -25px 0;
+}
+#right_panel:hover{
+    right:-1px;
+}
