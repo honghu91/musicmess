@@ -119,39 +119,44 @@
 		var data=e.dataTransfer.getData("Text");
         $("#" + data).unbind("hover");
 		var el=document.getElementById(data);
+
 		if(!el || !el.getAttribute('sound')){
 			return;
 		}
+
+        var elClone = el.cloneNode();
+        elClone.title = "";
+        elClone.id = "";
+
         var personClass = e.target.className;
         for(var i = 0;i < queue.length;i ++){
             if(personClass === queue[i]._className){
                 var person = queue[i];
             }
         }
+
 		if(!person._sound){
 			person.setSound(data);
 			person.play();
-            var elClone = el.cloneNode();
-            elClone.title = "";
-            elClone.id = "";
 			person.getElement().find('.bubble').append(elClone);
 			tryAddPerson();
-			el.setAttribute('draggable',false);
-			el.style.opacity='.3';
+			
 		}else{//增加替换代码
-            var elClone = el.cloneNode();
-            elClone.title = "";
-            elClone.id = "";
             person.getElement().find('.icon').replaceWith(elClone);
             person._audioService.stop(person._sound);
             var oldSoundIcon = document.getElementById(person._sound);
             oldSoundIcon.setAttribute("draggable",true);
 			oldSoundIcon.style.opacity='1';
+            //var playing = person._playing;
             person.setSound(data);
-            if(person._playing) person.play();
-			el.setAttribute('draggable',false);
-			el.style.opacity='.3';
+            if(person._playing) person.play();//如果之前没有处于静音状态
+            else{
+                person.stop();
+            }
         }
+
+        el.setAttribute('draggable',false);
+        el.style.opacity='.5';
         audioService.context.chorus();
         checkSolo();
 		//console.info('drop');
