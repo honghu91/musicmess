@@ -12,7 +12,27 @@
 		queue=[];
 	var initData,
 		notLoadCount;
-	
+
+    var CGI_GET_LIST = "http://cgi.appx.qq.com/easypay/payed_list",
+        CGI_GET_PARAMS = "http://cgi.appx.qq.com/easypay/change_auth_info";
+
+    var appid = GetQueryString("app_id"),
+        openid = GetQueryString("app_openid"),
+        openkey = GetQueryString("app_openkey"),
+        pf = GetQueryString("pf"),
+        pfkey = GetQueryString("pfkey");
+
+    //获取url中参数的value
+    function GetQueryString(name)
+    {
+        var reg=new RegExp("(^|&)"+name+"=([^&]*)(&|$)");
+        var r=window.location.search.substr(1).match(reg);
+        if(r!=null){
+            return decodeURI(r[2]);
+        }
+        return null;
+    }
+
 	var getQueueId = function(){
 		var id=0;
 		return function(){
@@ -164,6 +184,32 @@
     function onDragEnd(e){
         packageContext.addHoverEvent();//最后绑定事件
     }
+
+    function onPay(e){
+        var goodslist = [{
+            goods_id:e.target.id,
+            buy_count:1
+        }];
+        var url = CGI_GET_PARAMS+"?appid="+appid+"&openid="+openid+"&openkey="+openkey+"&pf="+pf+"&pfkey="+pfkey
+            +"&goodslist="+goodslist+"&retype=2";
+        music.jsonp.getJSONP(url,function(response){
+            if(!response || response.retcode != 0 || !response.result || !response.result.url_params){
+                console.log("支付功能暂不可用，请稍后再试");
+            }
+            fusion2.dialog.buy({
+                param:response.result.url_param,
+                sandbox:true,
+                context:packageContext,
+                onSuccess:function(){
+                    console.log("购买成功");
+                },
+                onCancel:function(){
+                    console.log("购买失败");
+                }
+            })
+        });
+    }
+
 	function soundLoaded(id){
 		var icon=document.getElementById(id);
 		if(icon){
@@ -244,29 +290,38 @@
 		stateWrapEl.addEventListener('drop',onDrop,false);
         */
 		soundBarEl=document.getElementById('soundbar');
+        payBarEl=document.getElementById('right_panel');
 		var info=music.model.getMusicInfo();
 		notLoadCount=info.length;
-		for(var i=0,len=info.length;i<len;i++){
-			var el=document.createElement('div');
-			el.id=info[i].name;
-			el.className='icon';
-            el.title = "试听";
-			el.style.backgroundPosition=info[i].pos;
-			el.setAttribute('sound',info[i].name);
-			//el.setAttribute('draggable',true);
-			el.addEventListener('dragstart',onDrag,false);
-            el.addEventListener('dragend',onDragEnd,false);
-			soundBarEl.appendChild(el);
-			audioService.loadSound(info[i].name,soundLoaded);
-		}
-        //hover试听
-
-        $("#soundbar .icon").each(function(i){
-            $(this).hover(hoverPlaying,unHoverPlaying);
+        var url = CGI_GET_LIST+"?appid="+appid+"&openid="+openid+"&openkey="+openkey+"&retype=2";
+		music.jsonp.getJSONP(url, function(response){
+            if(!response|| response.retcode != 0){
+                console.log("网络问题导致数据不正确，请稍后刷新应用");
+            }
+            for(var i=0,len=info.length;i<len;i++){
+                var el=document.createElement('div');
+                el.id=info[i].name;
+                el.className='icon';
+                el.style.backgroundPosition=info[i].pos;
+                el.setAttribute('sound',info[i].name);
+                //el.setAttribute('draggable',true);
+                el.addEventListener('dragstart',onDrag,false);
+                el.addEventListener('dragend',onDragEnd,false);
+                $(el).hover(hoverPlaying,unHoverPlaying);
+                if(response.result && response.result.musicList && response.result.musicList.indexOf(info[i].name) != -1){
+                    el.title = "试听";
+                    soundBarEl.appendChild(el);
+                    audioService.loadSound(info[i].name,soundLoaded);
+                }else {
+                    el.title = "购买";
+                    el.addEventListener('click',onPay,false);
+                    payBarEl.appendChild(el);
+                    audioService.loadSound(info[i].name,soundLoaded);
+                }
+            }
+            tryAddPerson();
+            setInterval(tryAddNote,2000);
         });
-
-		tryAddPerson();
-		setInterval(tryAddNote,2000);
 	};
 	// packageContext.reg=function(event,callback){
 		// if(!_event[event]){

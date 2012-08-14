@@ -11,16 +11,15 @@
     while (node = ns.shift()){
         packageContext = packageContext[node] = packageContext[node] || {};
     }
-
     var count = 0;
 
     packageContext.getJSONP = function(url, callback){
-        var cbnum = count++;
+        var cbnum = "cb" + (count++);
         var cbname = "music.jsonp.getJSONP." + cbnum;
         if(url.indexOf('?') == -1){
-            url += "?jsonp=" +cbname;
+            url += "?callback=" +cbname;
         }else {
-            url += "&jsonp=" +cbname;
+            url += "&callback=" +cbname;
         }
         var script = document.createElement("script");
         packageContext.getJSONP[cbnum] = function(response){
