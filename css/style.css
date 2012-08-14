@@ -508,7 +508,9 @@ h1{
 	display: none;
 	background:url(./image/ok.jpg);
 }
-
+#loginBtn{
+        display:none;
+}
 #right_panel{
     position:absolute;
     width:150px;
@@ -518,7 +520,6 @@ h1{
     background-image: url(./image/right_panel.png);
     background-position: -25px 0;
 }
-
 #right_panel:hover{
     right:-1px;
 }

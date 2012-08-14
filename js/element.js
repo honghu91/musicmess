@@ -128,6 +128,7 @@ var Element = function ( id ){
 	this._music = music;
 	this._sound = null;
 	this._playing = false;
+    this._isSolo = false;
 
 	this._init();
 };
@@ -140,14 +141,22 @@ Element.prototype._init = function (){
 Element.prototype._mute = function(){
     var self = this;
     var element = this._uiElement.getElement();
+
     if(self._playing){
         element.find('.mute').addClass("hoverStyle");
         self.stop();
-    }else{
+    }
+};
+
+Element.prototype._unmute = function(){
+    var self = this;
+    var element = this._uiElement.getElement();
+
+    if(!self._playing){
         element.find('.mute').removeClass("hoverStyle");
         self.play();
     }
-};
+}
 
 Element.prototype._bindEvent = function (){
 	var self = this;
@@ -160,10 +169,18 @@ Element.prototype._bindEvent = function (){
 	// });
 
 	element.find('.mute').click(function (e){
-        self._mute();
+        self._playing ? self._mute() : self._unmute();
+        self._music.state.notify('checkSolo', this._id);//检查是否有鸟独唱,本element不具备此能力
     });
-    element.find('.solo').click(function(){
-        
+
+    element.find('.solo').click(function(){//独唱就是其他静音，不管之前什么其他鸟处于什么状态
+        if(!self._isSolo){
+            self._music.state.notify('muteAll', this._id);
+            self._unmute();
+        }else{
+            self._music.state.notify('unmuteAll');
+        }
+        self._music.state.notify('checkSolo', this._id);//检查是否有鸟独唱,本element不具备此能力
     });
 
 	element.find('.stop').bind('click', function (e){
