@@ -523,3 +523,54 @@ h1{
 #right_panel:hover{
     right:-1px;
 }
+/** start msgbox样式 **/
+.msgbox{
+        -webkit-transition:all 0.2s ease-in;
+        position:absolute;
+        top:0;
+        display:none;
+        width:379px;
+        height:219px;
+        left:280px;
+        top:80px;
+        background:url(image/msgboxbg.png) no-repeat;
+}
+.close{
+        float:right;
+        margin:8px 9px 0 0;
+        opacity:.4;
+        border-radius:20px;
+        -webkit-transition:all 0.4s ease-in;
+}
+.close:hover{
+        -webkit-box-shadow:0px 0px 5px  red;
+        opacity:1;
+}
+.msgbox .msg{
+        margin:70px auto;
+        width:260px;
+        font-size:18px;
+        font-weight:bold;
+        color:#df6400;
+        line-height:35px;
+        text-align:center;
+}
+.msgbox .button{
+        height:22px;
+        line-height:22px;
+        cursor:pointer;
+        padding:4px;
+        width:50px;
+        font-weight:normal;
+        color:#fff;
+        display:inline-block;
+        margin:6px;
+        font-size:14px;
+        background:-webkit-gradient(linear,left top,left bottom,from(#efbc7f),to(#c05400));
+        border-radius:10px;
+        -webkit-transition:all 0.2s ease-in;
+}
+.msgbox .button:hover{
+        -webkit-box-shadow:0 0 6px #df6400;
+}
+/** end msgbox样式 **/

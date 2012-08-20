@@ -2,6 +2,7 @@
 	//console.info('hello world');
 	audioService.init();
 	music.loading.init();
+    music.msgbox.init();
 	music.loading.ready(function(){
 		var query=location.search;
 		var m=query.match(/[\?&]sound=([^&]*)/);

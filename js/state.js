@@ -294,10 +294,12 @@
 		var info=music.model.getMusicInfo();
 		notLoadCount=info.length;
         var url = CGI_GET_LIST+"?appid="+appid+"&openid="+openid+"&openkey="+openkey+"&retype=2";
-		music.jsonp.getJSONP(url, function(response){
+		//music.jsonp.getJSONP(url, function(response){
+        /*
             if(!response|| response.retcode != 0){
                 console.log("网络问题导致数据不正确，请稍后刷新应用");
             }
+            */
             for(var i=0,len=info.length;i<len;i++){
                 var el=document.createElement('div');
                 el.id=info[i].name;
@@ -308,20 +310,22 @@
                 el.addEventListener('dragstart',onDrag,false);
                 el.addEventListener('dragend',onDragEnd,false);
                 $(el).hover(hoverPlaying,unHoverPlaying);
+                /*
                 if(response.result && response.result.musicList && response.result.musicList.indexOf(info[i].name) != -1){
                     el.title = "试听";
                     soundBarEl.appendChild(el);
                     audioService.loadSound(info[i].name,soundLoaded);
                 }else {
+                */
                     el.title = "购买";
                     el.addEventListener('click',onPay,false);
                     payBarEl.appendChild(el);
                     audioService.loadSound(info[i].name,soundLoaded);
-                }
+                //}
             }
             tryAddPerson();
             setInterval(tryAddNote,2000);
-        });
+        //});
 	};
 	// packageContext.reg=function(event,callback){
 		// if(!_event[event]){
