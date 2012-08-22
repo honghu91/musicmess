@@ -9,7 +9,8 @@
   },
   "permissions": [
     "unlimitedStorage",
-  "http://*.google.com/"
+  "http://*.qq.com/"
+
   ]
 }
 

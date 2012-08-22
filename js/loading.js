@@ -25,7 +25,8 @@
 			'note.png',
 			'shadow.png',
 			'remove.png',
-			'wb.png'];
+			'wb.png',
+            'msgsorry.png'];
 	packageContext.init=function(){
 		maskEl=document.getElementById('loading');
 		progressEl=document.getElementById('progress');

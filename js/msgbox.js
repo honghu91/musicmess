@@ -37,7 +37,10 @@
         },
         show: function(){
             $(".msgbox").show();
-            $(".msgbox").height({height:'219px'});
+            $(".msgbox").css({"height":'219px'});
+            setTimeout(function(){
+                $(".msgbox").children().show();
+            },100);
         },
         open: function(){
             this.show();
@@ -93,4 +96,3 @@
         Msgbox.msg(msg);
     };
 })('music.msgbox');
-

@@ -9,10 +9,20 @@
 </head>
 <body>
 	<a id="desc"  href="#" class="desc" title="点击开始玩"></a>
+  <script src="http://cdn.qplus.com/js/qplus.api.js"></script>
+  <script type="text/javascript">
+qplus.on( "app.pushParam", function(json){
+    var name = json.pushParam;
+    //name = "beat1_boom_a";
+    if(name){
+      window.location = "sing.html?" + name;
+    }
+});
+  </script>
     <script type="text/javascript" charset="utf-8">
         document.getElementById("desc").addEventListener('click',function(e){
-            window.location = "sing.html";
-            //window.location = "play.html" + window.location.search;
+            //window.location = "sing.html";
+            window.location = "play.html" + window.location.search;
         },false);
     </script>
 </body>

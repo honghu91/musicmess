@@ -1,5 +1,4 @@
 <html>
-    
     <head>
         <meta charset="UTF-8">
         <title>
@@ -7,7 +6,6 @@
         </title>
         <link type="text/css" rel="stylesheet" href="css/style.css">
     </head>
-    
     <body>
         <div id="loading" class="loadingMask" style="display: none; ">
             <div class="progressWrap">
@@ -25,10 +23,12 @@
             <a href="#" class="small-blue-button" id="loginBtn">
                 Login
             </a>
-            <a href="#" class="small-blue-button" id="resetBtn">
-                Reset
+            <a href="play.html" class="small-blue-button" id="resetBtn">
+                我要玩
             </a>
-            <img id="wbBtn" src="./css/image/wb.png" class="wb-button">
+            <a href="#" id="wbBtn" class="small-blue-button share">
+               分享 
+            </a>
         </div>
         <a href="#" class="large-orange-button" id="guessBtn">
             确定了
@@ -36,7 +36,7 @@
         <a href="#" class="large-orange-button" id="startGuessBtn">
             点击此处开始猜
         </a>
-        <div id="stateWrap">
+        <div id="stateWrap" style='cursor:pointer;' onclick="window.location='play.html';">
             <div id="state">
                 <div id="music_1345445795652" class="music-element transition enable playing effet3_tuilopta_a"
                 style="bottom: 14px; left: 10px; ">
@@ -108,5 +108,29 @@
         </div>
         <div id="ok">
         </div>
-    </body>
-</html>
+        <script src="http://cdn.qplus.com/js/qplus.api.js"></script>
+        <script type="text/javascript">
+(function(){
+        var name = window.location.search.replace("?","");
+        var mp3Url = 'http://stream19.qqmusic.qq.com/' + name + ".mp3";//需要改下
+        var audio = document.createElement("audio");
+        audio.src = mp3Url;
+        audio.loop = true;
+        document.body.appendChild(audio);
+        audio.play();
+        document.getElementById('wbBtn').onclick = function(){
+          qplus.onReady(function(){
+              qplus.app.share({
+                msg:'#We play birds#哈，我刚组建了自己的小鸟乐队，你要不要听一听呢？',
+                title:'分享给好友',
+                param: name,
+                shareBtnText:'立即分享',
+                capture:false,
+                shareTo:['wblog','qzone','buddy']
+              });
+          });
+        }
+})();
+          </script>
+      </body>
+  </html>
