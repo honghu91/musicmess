@@ -1,5 +1,7 @@
 ;$(function(){
 	music.loading.init();
+    music.msgbox.init();
+    music.share.init();
 	music.loading.ready(function(){
 		music.state.init();
 
