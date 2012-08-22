@@ -81,4 +81,3 @@
     };
 
 })('music.share');
-music.share.init();
