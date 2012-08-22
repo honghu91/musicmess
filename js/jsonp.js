@@ -34,5 +34,4 @@
         script.src = url;
         document.body.appendChild(script);
     }
-
 })("music.jsonp")

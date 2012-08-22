@@ -1,14 +1,20 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset="UTF-8" />
+	<meta charset="utf-8" />
 	<title>We play birds</title>
 	<style>
-		.desc{display:block;width:1000px;height:400px;margin: 100px auto;background:url(css/image/desc.png) no-repeat;}
+		#desc{
+            display:block;
+            width:1000px;
+            height:400px;
+            margin: 100px auto;
+            background:url(css/image/desc.png) no-repeat;
+        }
 	</style>
 </head>
 <body>
-	<a id="desc"  href="#" class="desc" title="点击开始玩"></a>
+	<a id="desc"  href="#" title="点击开始玩"></a>
     <script type="text/javascript" charset="utf-8">
         document.getElementById("desc").addEventListener('click',function(e){
             window.location = "play.html" + window.location.search;
