@@ -1,25 +1,27 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset="utf-8" />
+	<meta charset="UTF-8" />
 	<title>We play birds</title>
 	<style>
-        body{
-            overflow: hidden;
-        }
-		#desc{
-            display:block;
-            width:1000px;
-            height:400px;
-            margin: 100px auto;
-            background:url(css/image/desc.png) no-repeat;
-        }
+		.desc{display:block;width:1000px;height:400px;margin: 100px auto;background:url(css/image/desc.png) no-repeat;}
 	</style>
 </head>
 <body>
-	<a id="desc"  href="#" title="点击开始玩"></a>
+	<a id="desc"  href="#" class="desc" title="点击开始玩"></a>
+  <script src="http://cdn.qplus.com/js/qplus.api.js"></script>
+  <script type="text/javascript">
+qplus.on( "app.pushParam", function(json){
+    var name = json.pushParam;
+    //name = "beat1_boom_a";
+    if(name){
+      window.location = "sing.html?" + name;
+    }
+});
+  </script>
     <script type="text/javascript" charset="utf-8">
         document.getElementById("desc").addEventListener('click',function(e){
+            //window.location = "sing.html";
             window.location = "play.html" + window.location.search;
         },false);
     </script>
