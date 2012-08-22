@@ -124,6 +124,8 @@
         'remove.png',
         'share.png'];
 
+    packageContext.payedList = [];
+
     //获取url中参数的value
     function GetQueryString(name)
     {

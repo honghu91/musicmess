@@ -310,7 +310,7 @@
 		var musicInfo = music.model.musicList;
 
         $.each(musicInfo, function(index,value){
-            if(value.pay_state != 2){
+            if(value.pay_state == 0 || $.inArray(value.name, music.model.payedList) != -1){
                 soundbarEl.append(createSbarEl(value));
             }else {
                 paybarEl.append(createPbarEl(value));

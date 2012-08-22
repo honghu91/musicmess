@@ -186,8 +186,8 @@ h1{
 
 #soundbar{
 	width:1000px;
-	height:50px;
-	margin:20px auto;
+	height:35px;
+	margin:20px auto 10px auto;
 }
 
 #soundbar .icon{
@@ -247,9 +247,9 @@ h1{
     bottom .5s cubic-bezier(.5,-.5,1,1),
     opacity .5s linear;
 }
-#state:nth-child(1) .bird{
-    -webkit-transform:none !important;
-}
+/*#state:nth-child(1) .bird{*/
+    /*-webkit-transform:none !important;*/
+/*}*/
 .musicElement:last-child .bird{
     -webkit-transform:scale(-1,1);
 }

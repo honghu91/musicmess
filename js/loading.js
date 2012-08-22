@@ -65,8 +65,8 @@
                 updateProgress(callback);
                 return;
             }
-            $(response.result.goodslist).each(function(){
-                imgInfo[this.goods_id].pay_state = 1;
+            $(response.result.goodslist).each(function(index, value){
+                music.model.payedList.push(value.goods_id);
             })
             updateProgress(callback);
         })
