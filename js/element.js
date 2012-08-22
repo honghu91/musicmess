@@ -1,96 +1,37 @@
 /**
- * 状态
- * enable 准备播放
- * disabled 停止
- * show 显示
- *
- * 元素样式 music-element
- * 基础动画样式 transition
- * 
+ * musicElement
+ * “小鸟唱歌”UI
 **/
-var UIElement = function (){
+function UIElement(){
 	this._domElement = this._createElement();
-	this._state = 0;	// 0:初始化 1:enable 2:disable
-	
-	this.disable();
+	this._state;	//1:enable 2:disable
+    this.disable();
 };
 
 /**
- 创建音乐视觉元素 内部调用
+ 创建一个“小鸟唱歌”的html元素
 **/
-UIElement.prototype._createElement = function ( html ){
-	html = html || '<div id="music_'+(new Date().getTime())+'" class="music-element transition"><div class="bubble"><div class="bubbleArrow"></div></div><div class="bird '+this._createBird()+'"></div><!-- 音乐元素 --></div>';
-	return $( html );
+UIElement.prototype._createElement = function(){
+	var html = '<div id="music_' + (new Date().getTime()) + '" class="musicElement">\
+                    <div class="bubble">\
+                        <div class="bubbleArrow">\
+                        </div>\
+                    </div>\
+                    <div class="bird ' + this._createBird() + '">\
+                    </div>\
+                </div>';
+	return $(html);
 };
 
 /**
- 随机分配小鸟 内部调用
+ 随机创建小鸟CSS样式
 **/
-UIElement.prototype._createBird = function (){
-
-	var bird = 1 + Math.floor( Math.random() * 7 );
-	
-	if( !arguments.callee.bird ){
-		arguments.callee.bird = 1 + Math.floor( Math.random() * 7 );
-	} else {
-		arguments.callee.bird = ( arguments.callee.bird + 1 ) % 8;
-		arguments.callee.bird = arguments.callee.bird === 0 ? 8 : arguments.callee.bird;
-	}
-	
+UIElement.prototype._createBird = function(){
+	arguments.callee.birdRanId = (arguments.callee.birdRanId + 1) % 8;
 	var mirror = Math.random() < 0.2;
-	return 'bird' + arguments.callee.bird + ( mirror ? ' mirror': '');
+	return 'bird' + (arguments.callee.birdRanId + 1) + (mirror ? ' mirror' : '');
 };
-
-/**
- 播放动画 内部调用
-**/
-UIElement.prototype._animate = function ( animation ){
-	this._domElement.addClass( 'playing ' + animation );
-};
-
-/**
- 停止动画 内部调用
-**/
-UIElement.prototype._stopAnimate = function ( animation ){
-	this._domElement.removeClass( 'playing ' + animation );
-};
-
-
-
-/**
- 获取视觉元素DOM jQuery对象
-**/
-UIElement.prototype.getElement = function (){
-	return this._domElement;
-};
-
-/**
- 停止播放
-**/
-UIElement.prototype.stop = function ( animation ){
-	this._stopAnimate( animation );
-};
-
-/**
- 播放
-**/
-UIElement.prototype.play = function ( animation ){
-	this._animate( animation );
-};
-
-/**
- 显示元素
-**/
-UIElement.prototype.show = function (){
-	this._domElement.addClass('show');
-};
-
-/**
- 隐藏元素
-**/
-UIElement.prototype.hide = function (){
-	this._domElement.removeClass('show');
-};
+UIElement.prototype._createBird.birdRanId = Math.floor(Math.random() * 7);
 
 /**
  停用样式
@@ -102,133 +43,98 @@ UIElement.prototype.disable = function (){
 };
 
 /**
- 准备播放
+ 播放样式
 **/
 UIElement.prototype.enable = function (){
-	if( 0 === this._state ){
-		this._domElement.addClass('enable');
-	}
-	if( 2 === this._state ){
-		this._domElement.removeClass('disabled');
-		this._domElement.addClass('enable');
-	}
-	this._state = 1;
+    this._state = 1;
+	this._domElement.removeClass('disabled');
+	this._domElement.addClass('enable');
 };
 
 
 /**
- * 操作面板 opt-pannel
- * 按钮  静音 mute  移除 remove
+ * 操作面板 optionPannel
+ * 静音mute  独唱solo 移除remove
  * 
 **/
-var Element = function ( id ){
+function Element(id){
 	this._id = id;
-	this._uiElement = new UIElement();
-	this._audioService = audioService;
-	this._music = music;
 	this._sound = null;
-	this._playing = false;
+    this._className = null;
     this._isSolo = false;
 
+    this._uiElement = new UIElement();
+    this._pannel;
 	this._init();
 };
 
 Element.prototype._init = function (){
 	this._addPannel();
+    this._pannel = this.getElement().find('.optPannel');
 	this._bindEvent();
 };
 
-Element.prototype._mute = function(){
-    var self = this;
-    var element = this._uiElement.getElement();
-
-    if(self._playing){
-        element.find('.mute').addClass("hoverStyle");
-        self.stop();
-    }
+Element.prototype._addPannel = function (){
+    var element = this.getElement();
+    element.append('<div class="optPannel">\
+                        <a href="###" id="mute" class="optBtn" title="静音"></a>\
+                        <a href="###" id="solo" class="optBtn" title="独唱"></a>\
+                        <a href="###" id="remove" class="optBtn" title="移除"></a>\
+                    </div>');
 };
 
-Element.prototype._unmute = function(){
-    var self = this;
-    var element = this._uiElement.getElement();
-
-    if(!self._playing){
-        element.find('.mute').removeClass("hoverStyle");
-        self.play();
-    }
-}
-
 Element.prototype._bindEvent = function (){
-	var self = this;
-	var element = this._uiElement.getElement();
-	
-	// element.hover(function ( e ){
-		// self._showPannel();
-	// }, function ( e ){
-		// self._hidePannel();
-	// });
+    var context = this;
+    var element = this.getElement();
 
-	element.find('.mute').click(function (e){
-        self._playing ? self._mute() : self._unmute();
-        self._music.state.notify('checkSolo', this._id);//检查是否有鸟独唱,本element不具备此能力
+	element.find('#mute').click(function (e){
+        context.toggleMute();
     });
 
-    element.find('.solo').click(function(){//独唱就是其他静音，不管之前什么其他鸟处于什么状态
-        if(!self._isSolo){
-            self._music.state.notify('muteAll', this._id);
-            self._unmute();
+    element.find('#solo').click(function(){
+        if(!context._isSolo){
+            context._isSolo = true;
+            context._pannel.removeClass('mute');
+            context._pannel.addClass('solo');
+            music.audioControl.solo(context._sound);
+            music.state.notify('solo', context._id);
         }else{
-            self._music.state.notify('unmuteAll');
+            context._isSolo = false;
+            context._pannel.removeClass('solo');
+            music.audioControl.setVolumes(1);
+            music.state.notify('chorus');
         }
-        self._music.state.notify('checkSolo', this._id);//检查是否有鸟独唱,本element不具备此能力
     });
 
-	element.find('.stop').bind('click', function (e){
-		self.destroy();
+	element.find('#remove').bind('click', function (e){
+        context.destroy();
 	});
 
 };
 
-Element.prototype._addPannel = function (){
-	var element = this._uiElement.getElement();
-	element.append('<div class="opt-pannel"><a href="###" class="mute" title="静音"><!-- 图标 --></a><a href="###" class="solo" title="独唱"><!-- 图标 --></a><a href="###" class="stop" title="移除"><!-- 图标 --></a></div>');
+Element.prototype.isMute = function(){
+    return (music.audioControl.getVolume(this._sound) == 0);
 };
 
-// Element.prototype._showPannel = function (){
-	// var element = this._uiElement.getElement();
-	// element.addClass('show-pannel');
-// };
-
-// Element.prototype._hidePannel = function (){
-	// var element = this._uiElement.getElement();
-	// element.removeClass('show-pannel');
-// };
-
-Element.prototype.destroy = function (){
-	this.stop();
-    this._music.state.addHoverEvent(this._sound);
-	this._music.state.notify('remove', this._id);
-	this._uiElement.hide();
-};
-
-Element.prototype.getElement = function (){
-	return this._uiElement.getElement();
+Element.prototype.toggleMute = function(){
+     if(!this.isMute()){
+         this._pannel.addClass('mute');
+     }else {
+         this._pannel.removeClass('mute');
+     }
+     music.audioControl.mute(this._sound);
 };
 
 Element.prototype.solo = function(){
-    this._audioService.context.solo(this._sound);
+    music.audioControl.context.solo(this._sound);
 };
 
-Element.prototype.chorus = function(){
-    this._audioService.context.chorus();
+Element.prototype.destroy = function (){
+    music.state.notify('remove', this._id);
 };
-/**
- 停止播放
-**/
-Element.prototype.stop = function (){
-	this._uiElement.stop( this._sound );
-	this._audioService.stop( this._sound );
-	this._playing = false;
+
+Element.prototype.getElement = function (){
+    return this._uiElement._domElement;
 };
 
 /**
@@ -236,37 +142,8 @@ Element.prototype.stop = function (){
 **/
 Element.prototype.play = function (){
 	this._uiElement.enable();
-	this._uiElement.play( this._sound );
-	this._audioService.play( this._sound );
+    music.audioControl.play( this._sound );
 	this._playing = true;
-};
-
-/**
- 显示元素
-**/
-Element.prototype.show = function (){
-	this._uiElement.show();
-};
-
-/**
- 停用样式
-**/
-Element.prototype.disable = function (){
-	this._uiElement.disable();
-};
-
-/**
- 准备播放
-**/
-Element.prototype.enable = function (){
-	this._uiElement.enable();
-};
-
-/**
- 检测是否在播放
-**/
-Element.prototype.isPlaying = function (){
-	return this._playing;
 };
 
 /**

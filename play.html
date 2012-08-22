@@ -1,78 +1,43 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset="UTF-8" />
+	<meta charset="utf-8" />
 	<title>We play birds</title>
 	<link type="text/css" rel="stylesheet" href="css/style.css" />
+    <link type="text/css" rel="stylesheet" href="css/scrollstyle.css" />
 </head>
 <body>
-	<div id="loading" class="loadingMask">
-		<div class="progressWrap">
-			<div id="progress" class="progress"></div>
+	<div id="loadingMask">
+		<div id="progressWrap">
+			<div id="progress"></div>
 		</div>
-		<div id="progressValue" class="progressValue"></div>
+		<div id="progressValue"></div>
 	</div>
-	<h1>We play birds</h1>
-	<div class="toolbar">
-		<a href="#" class="small-blue-button" id="loginBtn">Login</a>
-		<a href="#" class="small-blue-button" id="resetBtn">Reset</a>
-		<a href="#" class="small-blue-button" id="wbBtn" style='float:right;'>分享</a>
+
+	<div id="topbar">
+		<a href="#" id="resetBtn" class="small-blue-button">Reset</a>
+		<img id="shareBtn" src="./css/image/share.png"/>
 	</div>
-	
-	<a href="#" class="large-orange-button" id="guessBtn">确定了</a>
-	<a href="#" class="large-orange-button" id="startGuessBtn">点击此处开始猜</a>
 	<div id="stateWrap">
 		<div id="state">
-            <div id="right_panel">
-
+            <div id="paybarWrap">
+                <div id="unfoldBtn"></div>
+                <div id="paybar"></div>
             </div>
 		</div>
-		<div class="grass"></div>
-		<div id = "snspanel" style="display:none">
-			<div id="panel-handle"></div>
-			<ul id="friend_list">
-				
-			</ul>
-		</div>
-		<div id="stateMask" class="stateMask">Loading...</div>
+		<div id="grass"></div>
 	</div>
 	<div id="soundbar"></div>
-	<div class="mask" style="display:none"></div>
-	<div id="login" style="display:none">
-		<input type="text" placeholder="输入您的昵称" class="name" />
-		<input type="button" id="enter" />
-	</div>
-	
-	<div id="ok">
-	</div>
-  <script src="http://cdn.qplus.com/js/qplus.api.js"></script>
-	<script src="js/jquery-1.7.2.min.js"></script>
-  <script src="js/jsonp.js"></script>
-  <script type="text/javascript" src="js/webkitAudioContext2.js"></script>
-	<script src="js/audio-service.js"></script>
-	<script src="js/loading.js"></script>
-	<script src="js/model.js"></script>
-	<script src="js/state.js"></script>
-	<script src="js/element.js"></script>
-	<script src="js/msgbox.js"></script>
-	<script src="js/share.js"></script>
-	<script src="js/main.js"></script>
-	<script src="js/sns.js"></script>
-	<script src="js/login.js"></script>
+	<div id="mask" style="display:none"></div>
 
-	<script>
-	$('body').bind('keydown', function ( e ){
-		var key = e.keyCode;
-		switch( key ){
-			case 27:
-				$('.mask').hide();
-				$('#login').hide();
-				break;
-			default:;
-		}
-		
-	});
-	</script>
-</script>
+    <script type="text/javascript" src="http://cdn.qplus.com/js/qplus.api.js"></script>
+	<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
+    <script type="text/javascript" src="js/jsonp.js"></script>
+    <script type="text/javascript" src="js/model.js"></script>
+	<script type="text/javascript" src="js/audioControl.js"></script>
+	<script type="text/javascript" src="js/loading.js"></script>
+    <script type="text/javascript" src="js/element.js"></script>
+	<script type="text/javascript" src="js/state.js"></script>
+	<script type="text/javascript" src="js/main.js"></script>
 </body>
 </html>
