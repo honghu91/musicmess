@@ -90,10 +90,12 @@ Element.prototype._soloClick = function(){
     }
     this._isSolo = !this._isSolo;
     this._domElement.toggleClass('solo');
+    music.state.notify('checkSolo');
 };
 
 Element.prototype._removeClick = function (){
     music.audioControl.stop(this._sound);
+    music.audioControl.unMute(this._sound);
     music.state.notify('remove', this._sound);
 };
 
