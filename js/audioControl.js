@@ -85,7 +85,11 @@
     }
 
     packageContext.mute = function(name){
-        packageContext.getVolume(name) != 0 ? packageContext.setVolume(name, 0) : packageContext.setVolume(name, 1);
+        packageContext.setVolume(name, 0);
+    };
+
+    packageContext.unMute = function(name){
+        packageContext.setVolume(name, 1);
     };
 
     packageContext.solo = function(name){

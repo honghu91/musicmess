@@ -10,8 +10,7 @@
 		stateEl,
 		soundbarEl,
         paybarEl,
-		queue = [],
-        birdId = 0;
+		queue = [];
 
     var CGI_GET_PARAMS = "http://cgi.appx.qq.com/easypay/change_auth_info",
         CGI_IS_PAYED = "http://cgi.appx.qq.com/easypay/is_payed",
@@ -19,37 +18,36 @@
 
 	function tryAddBird(){
 		if(queue.length == 0 || queue.length < MAX_PERSON && queue[queue.length - 1]._sound){
-			var bird = new Element(++birdId);
-            var birdUIElement = bird.getElement();
-            birdUIElement.css('bottom', Math.ceil(Math.random() * 20) + 'px');
-            bird._className = birdUIElement.children().eq(1).attr('class');
+			var bird = new Element();
+            bird._domElement.css('bottom', Math.ceil(Math.random() * 20) + 'px');
+            bird._className = bird._domElement.children().eq(1).attr('class');
 
-            birdUIElement.get(0).addEventListener('dragover', onDragOver, false);
-            birdUIElement.get(0).addEventListener('drop', onDrop, false);
+            bird._domElement.get(0).addEventListener('dragover', onDragOver, false);
+            bird._domElement.get(0).addEventListener('drop', onDrop, false);
 
 			queue.push(bird);
 
             setTimeout(function(){
-                birdUIElement.css('left', (queue.length * 190 - 180) + 'px');
+                bird._domElement.css('left', (queue.length * 190 - 180) + 'px');
             }, 0);
 
-			stateEl.append(birdUIElement);
+			stateEl.append(bird._domElement);
 			return true;
 		}
 		return false;
 	};
 
     function moveLeft(){
-        $.each(queue, function(index, value){
-            value.getElement().css('left', (index * 190 + 10)+'px');
+        $.each(queue, function(index, bird){
+            bird._domElement.css('left', (index * 190 + 10)+'px');
         });
     }
 
-	function removeBird(id){
-        $.each(queue, function(index,value){
-			if(value._id == id){
-                value.getElement().bind('webkitAnimationEnd',function(){
-                    $('#' + value._sound).attr({
+	function removeBird(sound){
+        $.each(queue, function(index, bird){
+			if(bird._sound == sound){
+                bird._domElement.bind('webkitAnimationEnd',function(){
+                    $('#' + bird._sound).attr({
                         'title': '试听',
                         'draggable': true
                     }).css({
@@ -58,15 +56,12 @@
                     }).hover(hoverPlaying, unHoverPlaying);
                     queue.splice(index, 1);
                     moveLeft();
-                    music.audioControl.stop(value._sound);
-                    music.audioControl.delPlayingSound(value._sound);
-//                    if(value._isSolo){
-//                        music.audioControl.setVolumes(1);
-//                    }
-                    value.getElement().remove();
+                    music.audioControl.delPlayingSound(bird._sound);
+                    bird._domElement.remove();
+                    checkSolo();
                     tryAddBird();
                 });
-				value.getElement().addClass('remove');
+                bird._domElement.addClass('remove');
                 return false;
 			}
 		});
@@ -90,7 +85,7 @@
 
 		var icon,
             iconClone,
-            bird;
+            targetBird;
 
         icon = $("#" + e.dataTransfer.getData('Text'));
 
@@ -103,29 +98,31 @@
             'draggable': false
         }).css({
             'opacity': 0.5,
-            'cursor': 'default',
-            '-webkit-animation': ''
+            'cursor': 'default'
         }).unbind('hover');
 
         iconClone = icon.clone();
         iconClone.attr('id', '').css('opacity', 1);
 
-        $.each(queue, function(index, value){
-            if(value._className == e.target.className){
-                bird = value;
-                return false;
+        $.each(queue, function(index, bird){
+            if(bird._sound && !bird._isMute){
+                music.audioControl.setVolume(bird._sound, 1);
+            }
+            if(bird._className == e.target.className){
+                targetBird = bird;
             }
         });
 
-		if(!bird._sound){
-			bird.getElement().children('.bubble').append(iconClone);
-            bird.setSound(icon.attr('id'));
-            music.audioControl.addPlayingSound(icon.attr('id'));
-            bird.play();
-			tryAddBird();
+		if(!targetBird._sound){
+            targetBird._domElement.children('.bubble').append(iconClone);
+            targetBird.setSound(iconClone.attr('sound'));
+            music.audioControl.addPlayingSound(iconClone.attr('sound'));
+            targetBird.play();
+            checkSolo();
+            tryAddBird();
 		}else{
-            music.audioControl.stop(bird._sound);
-            $('#' + bird._sound).attr({
+            music.audioControl.stop(targetBird._sound);
+            $('#' + targetBird._sound).attr({
                 'title': '试听',
                 'draggable': true
             }).css({
@@ -133,17 +130,13 @@
                 'cursor': 'pointer'
             }).hover(hoverPlaying, unHoverPlaying);
 
-            bird.getElement().find('.icon').replaceWith(iconClone);
-            bird.setSound(icon.attr('id'));
-            bird.play();
-        }
+            music.audioControl.delPlayingSound(icon.attr('sound'));
+            music.audioControl.addPlayingSound(iconClone.attr('sound'));
 
-        $.each(music.audioControl.playingSounds, function(index){
-            if(music.audioControl.getVolume(index).toFixed(1) == 0.1){
-                music.audioControl.setVolume(index, 1);
-            }
-        });
-        icon.attr('draggable', false).css('opacity', 0.5);
+            targetBird._domElement.find('.icon').replaceWith(iconClone);
+            targetBird.setSound(icon.attr('id'));
+            targetBird.play();
+        }
 	}
 
     function onPay(e){
@@ -190,6 +183,8 @@
                         return;
                     }
                     if(response.result.have_buy == 1){
+                        music.model.payedList.push(goods_id);
+
                         $('#'+ goods_id).parents('.item').css('-webkit-animation','fadeOutUp 1s ease-in-out both');
                         var el = $('#'+ goods_id).clone();
                         el.attr({
@@ -198,6 +193,9 @@
                         })
                         el.get(0).addEventListener('dragstart',onDragStart,false);
                         el.get(0).addEventListener('dragend',onDragEnd,false);
+                        el.bind('webkitAnimationEnd', function(e){
+                            $(this).css('-webkit-animation', 'none');
+                        })
                         el.css('-webkit-animation','fadeInUp 1s ease-in-out both').prependTo($('#soundbar'));
                     }else if(response.result.have_buy == 0){
                         console.log("支付失败");
@@ -210,46 +208,50 @@
         });
     }
 
-    function onAnimationEnd(e){
-        $(e.currentTarget).remove();
-    }
-
-    function onPayAnimationEnd(e){
-        $(e.currentTarget).parents('#paybarWrap').css('right','-126px');
-        $(e.currentTarget).remove();
+    function checkAllpayed(){
+        if(music.model.payedList.length == 5){
+            $('#allpay').css('display', 'block');
+        }
     }
 
     function tryAddNote(){
-		if(stateWrapEl.children('.note').length > 20){
+		if(stateWrapEl.find('.note').length > 20){
 			return;
 		}
 
-        $.each(queue, function(index, value){
-			if(value._sound && !value.isMute() && Math.random()<.5){
+        $.each(queue, function(index, bird){
+			if(bird._sound && !bird._isMute && Math.random()<.5){
 				var note = $('<div/>');
 
-                note.attr('class', 'note note' + Math.floor(Math.random() * 6 + 1))
+                note.attr('class', 'note note' + Math.floor(Math.random() * 5 + 1));
 				note.css({
-                    '-webkit-transition': 'roll 1s infinite, fly' + Math.floor(Math.random() * 2 + 1) +
+                    '-webkit-animation': 'roll 1s infinite, fly' + Math.floor(Math.random() * 2 + 1) +
                         ' ' + Math.floor(Math.random() * 5 + 5) + 's 1',
                     'left': (index * 190 + Math.floor(Math.random() * 100) + 55) + 'px'
                 });
-				note.bind('webkitAnimationEnd',onAnimationEnd);
-
+				note.bind('webkitAnimationEnd',function(e){
+                    $(e.currentTarget).remove();
+                });
 				stateWrapEl.append(note);
 			}
 		});
 	}
 
+    var timeoutId;
     function hoverPlaying(e){
-        music.audioControl.play(e.target.id);
-        music.audioControl.setVolumes(0.1);
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(function(){
+            music.audioControl.play(e.target.id);
+            music.audioControl.setVolumes(0);
+        }, 1000);
     }
+
     function unHoverPlaying(e){
+        clearTimeout(timeoutId);
         music.audioControl.stop(e.target.id);
-        $.each(music.audioControl.playingSounds, function(index){
-            if(music.audioControl.getVolume(index).toFixed(1) == 0.1){
-                music.audioControl.setVolume(index, 1);
+        $.each(queue, function(index, bird){
+            if(bird._sound && !bird._isMute){
+                music.audioControl.setVolume(bird._sound, 1);
             }
         });
     }
@@ -269,12 +271,17 @@
 
         el.get(0).addEventListener('dragstart',onDragStart,false);
         el.get(0).addEventListener('dragend',onDragEnd,false);
+
         return el;
     }
 
     function createPbarEl(data){
         var el_item =  $('<div>');
-        el_item.attr('class', 'item').bind('webkitAnimationEnd', onPayAnimationEnd);
+        el_item.attr('class', 'item').bind('webkitAnimationEnd', function(e){
+            checkAllpayed();
+            $(e.currentTarget).parents('#paybarWrap').css('right','-126px');
+            $(e.currentTarget).remove();
+        });
 
         var el_out =  $('<div>');
         el_out.attr({
@@ -301,6 +308,29 @@
         return el_item;
     }
 
+    function checkSolo(){
+        var count = 0,
+            target = null;
+        $.each(queue, function(index, bird){
+            if(bird._sound && !bird._isMute){
+                count++;
+                target = bird;
+            }
+        });
+
+        if(count == 1){
+            target._isSolo = true;
+            target._domElement.addClass('solo');
+        }else if(count > 1){
+            $.each(queue, function(index, bird){
+                if(bird._isSolo){
+                    bird._isSolo = false;
+                    bird._domElement.removeClass('solo');
+                }
+            });
+        }
+    }
+
 	packageContext.init = function(){
 		stateWrapEl = $('#stateWrap');
 		stateEl = $('#state');
@@ -323,62 +353,77 @@
             });
         });
 
+        checkAllpayed();
+
         notifyPay();
 
         tryAddBird();
-        setInterval(tryAddNote,2000);
+        setInterval(tryAddNote, 2000);
 	};
 
-	packageContext.notify=function(event,data){
+	packageContext.notify = function(event, data){
 		switch(event){
 			case 'remove':
 				removeBird(data);
 				break;
 
             case 'solo':
-                $.each(queue, function(index,value){
-                    if(!value._isSolo){
-                        value._pannel.addClass('mute');
-                    }else if(value._id != data){
-                        value._isSolo = false;
-                        value._pannel.removeClass('solo');
-                        value._pannel.addClass('mute');
+                $.each(queue, function(index,bird){
+                    if(bird._sound && bird._sound != data){
+                        if(bird._isSolo){
+                            bird._isMute = true;
+                            music.audioControl.mute(bird._sound);
+                            bird._isSolo = false;
+                            bird._domElement.removeClass('solo');
+                            bird._domElement.addClass('mute');
+                        }else if(!bird._isMute){
+                            bird._isMute = true;
+                            music.audioControl.mute(bird._sound);
+                            bird._domElement.addClass('mute');
+                        }
                     }
                 });
                 break;
 
-            case 'chorus':
-                $.each(queue, function(index,value){
-                    if(!value._isSolo){
-                        value._pannel.removeClass('mute');
+            case 'unSolo':
+                $.each(queue, function(index, bird){
+                    if(bird._sound){
+                        bird._isMute = false;
+                        music.audioControl.unMute(bird._sound);
+                        bird._domElement.removeClass('mute');
                     }
                 });
                 break;
+
+            case 'checkSolo':
+                checkSolo();
+                break;
+
 			default:
-				console.log('unknown command');
+				console.log('不知道的命令');
 				break;
 		}
 	};
 
 	packageContext.reset = function(){
-        $.each(queue, function(index, value){
-            value.getElement().addClass('remove');
-            if(value._sound){
-                $('#' + value._sound).attr({
+        $.each(queue, function(index, bird){
+            bird._domElement.addClass('remove');
+            if(bird._sound){
+                $('#' + bird._sound).attr({
                     'title': '试听',
                     'draggable': true
                 }).css({
-                        'opacity': 1,
-                        'cursor': 'pointer'
+                    'opacity': 1,
+                    'cursor': 'pointer'
                 }).hover(hoverPlaying, unHoverPlaying);
-                music.audioControl.stop(value._sound);
-                music.audioControl.delPlayingSound(value._sound);
+                music.audioControl.stop(bird._sound);
+                music.audioControl.delPlayingSound(bird._sound);
             }
         });
 
         setTimeout(function(){
-            $.each(queue, function(index, value){
-                value.getElement().remove();
+            $.each(queue, function(index, bird){
+                bird._domElement.remove();
             });
             queue = [];
             tryAddBird();
@@ -387,9 +432,9 @@
 
 	packageContext.collect=function(){
 		var list = [];
-        $.each(queue, function(index, value){
-            if(value._sound){
-                list.push(value._sound);
+        $.each(queue, function(index, bird){
+            if(bird._sound){
+                list.push(bird._sound);
             }
         });
 		return list;
