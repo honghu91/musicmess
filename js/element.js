@@ -95,7 +95,9 @@ Element.prototype._soloClick = function(){
 
 Element.prototype._removeClick = function (){
     music.audioControl.stop(this._sound);
-    music.audioControl.unMute(this._sound);
+    setTimeout(function(){
+        music.audioControl.unMute(this._sound);
+    }, 0);
     music.state.notify('remove', this._sound);
 };
 
