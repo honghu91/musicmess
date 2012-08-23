@@ -105,10 +105,7 @@
         iconClone.attr('id', '').css('opacity', 1);
 
         $.each(queue, function(index, bird){
-            if(bird._sound && !bird._isMute){
-                music.audioControl.setVolume(bird._sound, 1);
-            }
-            if(bird._className == e.target.className){
+            if(bird._className == $(e.currentTarget).find('.bird').attr('class')){
                 targetBird = bird;
             }
         });
@@ -117,6 +114,7 @@
             targetBird._domElement.children('.bubble').append(iconClone);
             targetBird.setSound(iconClone.attr('sound'));
             music.audioControl.addPlayingSound(iconClone.attr('sound'));
+            clearTimeout(timeoutId);
             targetBird.play();
             checkSolo();
             tryAddBird();
@@ -130,13 +128,23 @@
                 'cursor': 'pointer'
             }).hover(hoverPlaying, unHoverPlaying);
 
-            music.audioControl.delPlayingSound(icon.attr('sound'));
+            music.audioControl.delPlayingSound(targetBird._sound);
             music.audioControl.addPlayingSound(iconClone.attr('sound'));
 
             targetBird._domElement.find('.icon').replaceWith(iconClone);
-            targetBird.setSound(icon.attr('id'));
-            targetBird.play();
+            targetBird.setSound(iconClone.attr('sound'));
+            if(!targetBird._isMute){
+                targetBird.play();
+            }else{
+                music.audioControl.mute(targetBird._sound);
+            }
         }
+
+        $.each(queue, function(index, bird){
+            if(bird._sound && !bird._isMute){
+                music.audioControl.setVolume(bird._sound, 1);
+            }
+        });
 	}
 
     function onPay(e){
@@ -241,14 +249,14 @@
     function hoverPlaying(e){
         clearTimeout(timeoutId);
         timeoutId = setTimeout(function(){
-            music.audioControl.play(e.target.id);
             music.audioControl.setVolumes(0);
-        }, 1000);
+            music.audioControl.play(e.currentTarget.id);
+        }, 500);
     }
 
     function unHoverPlaying(e){
         clearTimeout(timeoutId);
-        music.audioControl.stop(e.target.id);
+        music.audioControl.stop(e.currentTarget.id);
         $.each(queue, function(index, bird){
             if(bird._sound && !bird._isMute){
                 music.audioControl.setVolume(bird._sound, 1);
@@ -433,7 +441,7 @@
 	packageContext.collect=function(){
 		var list = [];
         $.each(queue, function(index, bird){
-            if(bird._sound){
+            if(bird._sound && !bird._isMute){
                 list.push(bird._sound);
             }
         });
