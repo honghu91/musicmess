@@ -83,6 +83,8 @@
 	function onDrop(e){
 		e.preventDefault();
 
+        clearTimeout(timeoutId);
+
 		var icon,
             iconClone,
             targetBird;
@@ -114,12 +116,12 @@
             targetBird._domElement.children('.bubble').append(iconClone);
             targetBird.setSound(iconClone.attr('sound'));
             music.audioControl.addPlayingSound(iconClone.attr('sound'));
-            clearTimeout(timeoutId);
             targetBird.play();
             checkSolo();
             tryAddBird();
 		}else{
             music.audioControl.stop(targetBird._sound);
+            music.audioControl.unMute(targetBird._sound);
             $('#' + targetBird._sound).attr({
                 'title': '试听',
                 'draggable': true
@@ -133,6 +135,7 @@
 
             targetBird._domElement.find('.icon').replaceWith(iconClone);
             targetBird.setSound(iconClone.attr('sound'));
+
             if(!targetBird._isMute){
                 targetBird.play();
             }else{
