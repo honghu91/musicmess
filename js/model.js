@@ -15,6 +15,26 @@
 
 	packageContext.musicList =
         [{
+            name:'beat4_ptttpeu_a',
+            pos:'-120px 0px',
+            pay_state:2
+        },{
+            name:'effet3_tuilopta_a',
+            pos:'-80px -71.2px',
+            pay_state:2
+        },{
+            name:'beat5_slupttt_a',
+            pos:'0px -35.6px',
+            pay_state:2
+        },{
+            name:'effet4_tululou_a',
+            pos:'-120px -71.2px',
+            pay_state:2
+        },{
+            name:'melo5_tvutvutvu_a',
+            pos:'-40px -142.4px',
+            pay_state:2
+        },{
 			name:'beat1_boom_a',
 			pos:'0 0',
             pay_state:0
@@ -26,14 +46,6 @@
 			name:'beat3_paomeu_a',
 			pos:'-80px 0px',
             pay_state:0
-		},{
-			name:'beat4_ptttpeu_a',
-			pos:'-120px 0px',
-            pay_state:2
-		},{
-			name:'beat5_slupttt_a',
-			pos:'0px -35.6px',
-            pay_state:2
 		},{
 			name:'coeur1_oaaah_a',
 			pos:'-40px -35.6px',
@@ -55,14 +67,6 @@
 			pos:'-40px -71.2px',
             pay_state:0
 		},{
-			name:'effet3_tuilopta_a',
-			pos:'-80px -71.2px',
-            pay_state:2
-		},{
-			name:'effet4_tululou_a',
-			pos:'-120px -71.2px',
-            pay_state:2
-		},{
 			name:'effet5_tumttt_a',
 			pos:'0px -106.8px',
             pay_state:0
@@ -82,10 +86,6 @@
 			name:'melo4_tatouti_a',
 			pos:'0px -142.4px',
             pay_state:0
-		},{
-			name:'melo5_tvutvutvu_a',
-			pos:'-40px -142.4px',
-            pay_state:2
 		},{
 			name:'voix1_isit_a',
 			pos:'-80px -142.4px',
@@ -122,7 +122,11 @@
         'solo.png',
         'solo2.png',
         'remove.png',
-        'share.png'];
+        'share.png',
+        'msgboxbg.png',
+        'msgsorry.png',
+        'msgclose.png',
+        'all_payed.png'];
 
     packageContext.payedList = [];
 
