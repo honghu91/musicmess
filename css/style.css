@@ -511,6 +511,11 @@ h1{
     background:url(image/mute.png) -3px -0px no-repeat;
 }
 
+.mute .bird{
+    -webkit-animation:none !important;
+    background-position: -450px 0;
+}
+
 .mute #mute{
     background:url(image/mute2.png) -3px -0px no-repeat;
 }
