@@ -15,7 +15,7 @@ qplus.on( "app.pushParam", function(json){
     var name = json.pushParam;
     //name = "beat1_boom_a";
     if(name){
-      window.location = "sing.html?" + name;
+      window.location = "sing.html" + window.location.search + "&name=" + name;
     }
 });
   </script>

@@ -169,7 +169,7 @@
 
         music.jsonp.getJSONP(url,function(response){
             if(!response || response.retcode != 0 || !response.result || !response.result.url_params){
-                console.log("支付功能暂不可用，请稍后再试");
+                music.msgbox.msg("支付功能暂不可用，请稍后再试");
                 $('#'+ goods_id).parents('#paybarWrap').css('right','-126px')
                 return;
             }
@@ -189,7 +189,7 @@
                 var url = CGI_IS_PAYED+"?appid="+params.appid+"&openid="+params.openid+"&openkey="+params.openkey+"&goods_id="+ goods_id;
                 music.jsonp.getJSONP(url,function(response){
                     if(!response || response.retcode != 0 || !response.result || !response.result.have_buy){
-                        console.log("查询功能暂不可用，请稍后再试");
+                        music.msgbox.msg("查询功能暂不可用，请稍后再试");
                         $('#'+ goods_id).parents('#paybarWrap').css('right','-126px');
                         return;
                     }
@@ -209,7 +209,7 @@
                         })
                         el.css('-webkit-animation','fadeInUp 1s ease-in-out both').prependTo($('#soundbar'));
                     }else if(response.result.have_buy == 0){
-                        console.log("支付失败");
+                        music.msgbox.msg("支付失败");
                         $('#'+ goods_id).parents('#paybarWrap').css('right','-126px');
                     }
                 });
@@ -411,7 +411,7 @@
                 break;
 
 			default:
-				console.log('不知道的命令');
+				music.msgbox.msg('不知道的命令');
 				break;
 		}
 	};

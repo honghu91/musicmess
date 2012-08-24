@@ -19,11 +19,11 @@
         <h1>
             We play birds
         </h1>
-        <div class="toolbar">
+        <div class="toolbar" id='toolbar'>
             <a href="#" class="small-blue-button" id="loginBtn">
                 Login
             </a>
-            <a href="play.html" class="small-blue-button" id="resetBtn">
+            <a href="#" onclick="window.location='index.html' + document.location.search + '&flag=1';" class="small-blue-button" id="resetBtn">
                 我要玩
             </a>
             <a href="#" id="wbBtn" class="small-blue-button share">
@@ -36,7 +36,7 @@
         <a href="#" class="large-orange-button" id="startGuessBtn">
             点击此处开始猜
         </a>
-        <div id="stateWrap" style='cursor:pointer;' onclick="window.location='play.html';">
+        <div id="stateWrap" style='cursor:pointer;' onclick="window.location='index.html' + document.location.search + '&flag=1';">
             <div id="state">
                 <div id="music_1345445795652" class="music-element transition enable playing effet3_tuilopta_a"
                 style="bottom: 14px; left: 10px; ">
@@ -111,13 +111,18 @@
         <script src="http://cdn.qplus.com/js/qplus.api.js"></script>
         <script type="text/javascript">
 (function(){
-        var name = window.location.search.replace("?","");
+        var name = /name=([^=]+)/.exec(window.location.search)[1];
         var mp3Url = 'http://stream19.qqmusic.qq.com/' + name + ".mp3";//需要改下
         var audio = document.createElement("audio");
         audio.src = mp3Url;
         audio.loop = true;
         document.body.appendChild(audio);
         audio.play();
+        var download = document.createElement("a");
+        download.href = mp3Url;
+        download.innerHTML = "下载";
+        download.className = "small-blue-button";
+        document.getElementById("toolbar").appendChild(download);
         document.getElementById('wbBtn').onclick = function(){
           qplus.onReady(function(){
               qplus.app.share({

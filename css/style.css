@@ -555,7 +555,7 @@ h1{
         -webkit-transition:all 0.4s ease-in;
 }
 .close:hover{
-        -webkit-box-shadow:0px 0px 5px  red;
+        /*-webkit-box-shadow:0px 0px 5px  red;*/
         opacity:1;
 }
 .msgbox .msg{
