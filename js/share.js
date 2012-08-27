@@ -5,12 +5,10 @@
 		packageContext=packageContext[node]=packageContext[node] || {};
 	}
     var uri = location.search;
-    var regOpenid = /app_openid=([A-Za-z0-9]+)/;
-    var regAppid = /app_id=([A-Za-z0-9]+)/;
-    var regOpenkey = /app_openkey=([A-Za-z0-9]+)/;
-    var openid = regOpenid.exec(uri)[1],
-        openkey = regOpenkey.exec(uri)[1],
-        appid = regAppid.exec(uri)[1],
+    var params = music.model.params;
+    var openid = params.openid,
+        openkey = params.openkey,
+        appid = params.appid,
         musicList = [];
 
     var Share = {
@@ -21,7 +19,7 @@
             var _this = this;
             musicList = music.state.collect();
             if(musicList.length == 0) {
-                music.msgbox.msg("<span style='font-size:12px;'>亲，没有可以分享的音乐哦，请先组建你的乐队后再分享吧</span>");
+                music.msgbox.msg("请先组建你的乐队后再分享吧");
                 return false;
             }
 
